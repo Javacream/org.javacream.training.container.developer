@@ -1,0 +1,21 @@
+{
+  "name": "Spring Boot (Java 21) Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/java:1-21-bookworm",
+  "remoteUser": "vscode",
+  "forwardPorts": [8080],
+  "postCreateCommand": "mvn -q -DskipTests package",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vmware.vscode-spring-boot",
+        "redhat.java",
+        "vscjava.vscode-maven"
+      ],
+      "settings": {
+        "java.configuration.updateBuildConfiguration": "interactive",
+        "editor.formatOnSave": true
+      }
+    }
+  }
+}

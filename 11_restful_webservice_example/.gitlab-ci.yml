@@ -1,0 +1,44 @@
+stages:
+  - test
+  - build
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+  DOCKER_BUILDKIT: "1"
+
+test:maven:
+  stage: test
+  image: maven:3.9-eclipse-temurin-21
+  script:
+    - mvn -q test
+  cache:
+    key: maven
+    paths:
+      - .m2/repository
+  variables:
+    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+build:image:
+  stage: build
+  image: docker:27
+  services:
+    - name: docker:27-dind
+      command: ["--mtu=1460"]
+  before_script:
+    - docker info
+    - docker buildx version
+    - docker buildx create --name ci-builder --driver docker-container --use
+    - docker buildx inspect --bootstrap
+  script:
+    - >
+      docker buildx build
+      --progress=plain
+      --pull
+      --tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA"
+      --load
+      .
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA"
+  rules:
+    - if: $CI_COMMIT_BRANCH
