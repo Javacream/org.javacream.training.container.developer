@@ -1,0 +1,5 @@
+services:
+  secured_hello:
+    build: .
+    image: javacream/hello:1.0
+  
