@@ -1,0 +1,5 @@
+services:
+  secured_python:
+    build: .
+    image: javacream/python:1.0
+  
