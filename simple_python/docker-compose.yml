@@ -1,0 +1,5 @@
+services:
+  simple_python:
+    build: .
+    image: javacream/python_app:1.0
+  
